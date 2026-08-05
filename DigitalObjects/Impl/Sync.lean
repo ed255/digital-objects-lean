@@ -2,7 +2,7 @@ import DigitalObjects.Impl.TxLib
 import DigitalObjects.Impl.Types
 
 namespace Sync
-open Types (Object Nullifier)
+open Impl.Types (Object Nullifier)
 
 structure TxPayload where
   -- The Tx to be applied

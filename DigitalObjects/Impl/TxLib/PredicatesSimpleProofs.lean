@@ -8,7 +8,7 @@ import DigitalObjects.Impl.TxLib.PredicatesSimple
 import DigitalObjects.Impl.Types
 
 namespace TxLib
-open Types (Object Nullifier Chain)
+open Impl.Types (Object Nullifier Chain)
 
 --
 -- Stage 0

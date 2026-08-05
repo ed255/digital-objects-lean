@@ -4,7 +4,7 @@ import DigitalObjects.Impl.Types
 import DigitalObjects.Impl.TxLib.Events
 
 namespace TxLib
-open Types (Object ObjectType Nullifier Chain)
+open Impl.Types (Object ObjectType Nullifier Chain)
 
 def ArrayContains {α : Type} (array : List α) (index : Nat) (element : α) : Prop :=
   array[index]? = some element

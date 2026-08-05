@@ -8,7 +8,7 @@ import DigitalObjects.Impl.TxLib.Events
 import DigitalObjects.Impl.TxLib.Predicates
 
 namespace TxLib
-open Types (Object Nullifier Chain)
+open Impl.Types (Object Nullifier Chain)
 
 --
 -- Stage 0: Simplified individual predicates.

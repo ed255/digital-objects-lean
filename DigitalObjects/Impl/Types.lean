@@ -1,7 +1,7 @@
 import Mathlib.Data.Finset.Basic
 import DigitalObjects.Spec
 
-namespace Types
+namespace Impl.Types
 
 -- Represents ~256 bit element (4 x Goldilocks prime field)
 abbrev Hash := Nat
@@ -175,4 +175,4 @@ def ObjectType.Valid (t : ObjectType) (o : Object) (chain_start chain_end : Chai
     ValidAction b.action events objects ∧
     (b.action.localObjects objects)[b.index]? = some o
 
-end Types
+end Impl.Types
