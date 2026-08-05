@@ -187,9 +187,9 @@ structure TxPayload where
   state_header : TxLib.StateHeader
   -- The grounding state index
   state_header_index : Nat
-  -- The set of nullifiers for this tx
+  -- The set of nullifiers for this tx (corresponds to consumed objects)
   nullifiers : List Nullifier
-  -- The set of live objects added by this tx
+  -- The set of new live objects after this tx (corresponds to created objects)
   live : List Object
   -- Proof of TxFinalized
   proof : TxLib.TxFinalized state_header tx_final nullifiers.toFinset live.toFinset
@@ -210,11 +210,14 @@ def applyTx (state : TxLib.StateHeader) (tx : TxPayload) : Option TxLib.StateHea
   else if tx.live ≠ tx.live.eraseDups then
     none -- Duplicate created object within payload; rejecting
   else if tx.live.any (fun o => o ∈ state.created) then
+    -- NOTE: All (grounded) inputs to the tx must be consumed (mutated or
+    -- deleted).  Otherwise they'll appear in the tx.live and this check will
+    -- reject the tx.
     none -- Created object already exists (creation collision); rejecting
   else if tx.nullifiers ≠ tx.nullifiers.eraseDups then
     none -- Duplicate nullifier within payload; rejecting
   else if tx.nullifiers.any (fun n => n ∈ state.nullifiers) then
-    none -- Duplicate nullifier; rejecting
+    none -- Object already consumed (nullifier collision); rejecting
   else
     some
       { block_number := block_number
