@@ -1,4 +1,0 @@
-import DigitalObjects.TxLib.Events
-import DigitalObjects.TxLib.Predicates
-import DigitalObjects.TxLib.PredicatesSimpleProofs
-import DigitalObjects.TxLib.PredicatesSimple

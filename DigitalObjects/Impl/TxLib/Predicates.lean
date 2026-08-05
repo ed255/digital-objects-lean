@@ -1,10 +1,10 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Logic.Relation
-import DigitalObjects.Impl
-import DigitalObjects.TxLib.Events
+import DigitalObjects.Impl.Types
+import DigitalObjects.Impl.TxLib.Events
 
 namespace TxLib
-open Impl (Object Nullifier Chain)
+open Types (Object ObjectType Nullifier Chain)
 
 def ArrayContains {α : Type} (array : List α) (index : Nat) (element : α) : Prop :=
   array[index]? = some element
@@ -182,7 +182,7 @@ mutual
       -- private
       (new : Object)
       (new_live : Finset Object)
-      (guard : Impl.ObjectType)
+      (guard : ObjectType)
       -- statements
       (h1 : TxInsert after_chain before_chain new guard)
       (h2 : SetInsert before_tx.live new new_live)
@@ -210,7 +210,7 @@ mutual
       -- private
       (new : Object)
       (new_live : Finset Object)
-      (guard : Impl.ObjectType)
+      (guard : ObjectType)
       -- statements
       (h1 : TxInsert after_chain before_chain new guard)
       (h2 : SetInsert before_tx.live new new_live)
@@ -278,7 +278,7 @@ mutual
     | mk (before_tx after_tx : Tx) (before_chain after_chain : Chain)
       -- private
       (old new : Object)
-      (guard : Impl.ObjectType)
+      (guard : ObjectType)
       -- statements
       (h1 : TxMutate after_chain before_chain new old guard)
       (h2 : ReplayMutateEvent before_tx after_tx old new)
@@ -303,7 +303,7 @@ mutual
     | mk (before_tx after_tx : Tx) (before_chain after_chain : Chain)
       -- private
       (old : Object)
-      (guard : Impl.ObjectType)
+      (guard : ObjectType)
       (new_live : Finset Object)
       (mid_tx : Tx)
       -- statements
@@ -386,7 +386,7 @@ mutual
       (mid_tx : Tx)
       (mid_chain : Chain)
       (ins : Ins)
-      (guard : Impl.ObjectType)
+      (guard : ObjectType)
       -- statements
       (h1 : TxInsert mid_chain before_chain ins.new guard)
       (h2 : SetInsert before_tx.live ins.new ins.new_live)
@@ -408,7 +408,7 @@ mutual
       (mid_tx : Tx)
       (mid_chain : Chain)
       (pair : Pair)
-      (guard : Impl.ObjectType)
+      (guard : ObjectType)
       -- statements
       (h1 : TxMutate mid_chain before_chain pair.new pair.old guard)
       (h2 : ReplayMutateEvent before_tx mid_tx pair.old pair.new)

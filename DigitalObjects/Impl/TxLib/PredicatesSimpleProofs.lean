@@ -3,12 +3,12 @@
 
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Card
-import DigitalObjects.TxLib.Predicates
-import DigitalObjects.TxLib.PredicatesSimple
-import DigitalObjects.Impl
+import DigitalObjects.Impl.TxLib.Predicates
+import DigitalObjects.Impl.TxLib.PredicatesSimple
+import DigitalObjects.Impl.Types
 
 namespace TxLib
-open Impl (Object Nullifier Chain)
+open Types (Object Nullifier Chain)
 
 --
 -- Stage 0

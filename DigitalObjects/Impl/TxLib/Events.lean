@@ -1,7 +1,7 @@
-import DigitalObjects.Impl
+import DigitalObjects.Impl.Types
 
 namespace TxLib
-open Impl (Object Chain Event)
+open Types (Object ObjectType Chain Event)
 
 -- TxLib uses hash chains to roll a sequence of values and then unroll it.
 -- Assuming secure cryptographic hashes and the random oracle model, we can
@@ -28,7 +28,7 @@ open Impl (Object Chain Event)
 --   Hash({}, new, event_hash)
 --   Hash(prev_chain, event_hash, chain)
 -- )
-def TxInsert (chain prev_chain : Chain) (new : Impl.Object) (type : Impl.ObjectType) :=
+def TxInsert (chain prev_chain : Chain) (new : Object) (type : ObjectType) :=
   ∃ event : Event,
   new.type = type ∧
   event = .insert new ∧
@@ -47,7 +47,7 @@ def TxInsert (chain prev_chain : Chain) (new : Impl.Object) (type : Impl.ObjectT
 --   Hash(old, new, event_hash)
 --   Hash(prev_chain, event_hash, chain)
 -- )
-def TxMutate (chain prev_chain : Chain) (new old : Impl.Object) (type : Impl.ObjectType) :=
+def TxMutate (chain prev_chain : Chain) (new old : Object) (type : ObjectType) :=
   ∃ event : Event,
   new.type = type ∧
   old.type = type ∧
@@ -62,7 +62,7 @@ def TxMutate (chain prev_chain : Chain) (new old : Impl.Object) (type : Impl.Obj
 --   Hash(old, {}, event_hash)
 --   Hash(prev_chain, event_hash, chain)
 -- )
-def TxDelete (chain prev_chain : Chain) (old : Impl.Object) (type : Impl.ObjectType) :=
+def TxDelete (chain prev_chain : Chain) (old : Object) (type : ObjectType) :=
   ∃ event : Event,
   old.type = type ∧
   event = .delete old ∧

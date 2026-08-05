@@ -2,5 +2,4 @@
 -- Import modules here that should be built as part of the library.
 import DigitalObjects.Spec
 import DigitalObjects.Impl
-import DigitalObjects.TxLib
 import DigitalObjects.Proof
