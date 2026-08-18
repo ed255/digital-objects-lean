@@ -3,12 +3,12 @@
 
 import Mathlib.Data.Finset.Basic
 import Mathlib.Logic.Relation
-import DigitalObjects.Impl.Types
+import DigitalObjects.Impl.Defs
 import DigitalObjects.Impl.TxLib.Events
 import DigitalObjects.Impl.TxLib.Predicates
 
 namespace TxLib
-open Impl.Types (Object Nullifier Chain)
+open Impl (Object Nullifier Chain StateHeader)
 
 --
 -- Stage 0: Simplified individual predicates.

@@ -5,10 +5,10 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Card
 import DigitalObjects.Impl.TxLib.Predicates
 import DigitalObjects.Impl.TxLib.PredicatesSimple
-import DigitalObjects.Impl.Types
+import DigitalObjects.Impl.Defs
 
 namespace TxLib
-open Impl.Types (Object Nullifier Chain)
+open Impl (Object Nullifier Chain StateHeader)
 
 --
 -- Stage 0

@@ -1,14 +1,13 @@
 import DigitalObjects.Impl.TxLib
-import DigitalObjects.Impl.Types
+import DigitalObjects.Impl.Defs
 
-namespace Sync
-open Impl.Types (Object Nullifier)
+namespace Impl
 
 structure TxPayload where
   -- The Tx to be applied
   tx_final : TxLib.Tx
   -- The grounding state
-  state_header : TxLib.StateHeader
+  state_header : StateHeader
   -- The grounding state index
   state_header_index : Nat
   -- The set of nullifiers for this tx (corresponds to consumed objects)
@@ -18,14 +17,8 @@ structure TxPayload where
   -- Proof of TxFinalized
   proof : TxLib.TxFinalized state_header tx_final nullifiers.toFinset live.toFinset
 
-def genesisState : TxLib.StateHeader :=
-  { block_number := 0
-    created := []
-    nullifiers := ∅
-    prior_state_history := [] }
-
 -- Synchronizer procedure
-def applyTx (state : TxLib.StateHeader) (tx : TxPayload) : Option TxLib.StateHeader :=
+def applyTx (state : StateHeader) (tx : TxPayload) : Option StateHeader :=
   let state_history := state :: state.prior_state_history
   let block_number := state.block_number + 1
   if state_history[tx.state_header_index]? ≠ some tx.state_header then
@@ -50,4 +43,4 @@ def applyTx (state : TxLib.StateHeader) (tx : TxPayload) : Option TxLib.StateHea
         nullifiers := state.nullifiers ∪ tx.nullifiers.toFinset
         prior_state_history := state_history }
 
-end Sync
+end Impl

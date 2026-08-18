@@ -169,12 +169,14 @@ def InConsumed {Object : Type} (o : Object) (h : List (Tx Object)) : Prop :=
 
 -- The history is defined as a list of transactions, where the head is the most
 -- recent transaction.
-structure SystemSpec (Object : Type) [DecidableEq Object] where
+structure SystemSpec (Object : Type) (TxPayload : Type) [DecidableEq Object] where
   -- Properties that an implementation must define --
   -- Prop: A transaction is valid to append to a history
-  ValidTx : List (Tx Object) → Tx Object → Prop
+  ValidTx : List TxPayload → TxPayload → Prop
   -- Fun: returns the type of the object
   typeOf (o : Object) : ObjectType Object
+  -- Fun: semantic transaction content of an implementation dependent transaction payload
+  specTx : TxPayload -> Tx Object
 
   -- Theorems that an implementation must prove --
 
@@ -186,32 +188,37 @@ structure SystemSpec (Object : Type) [DecidableEq Object] where
   -- * the object was not previously consumed (in a previous tx, or in a previous effect in the tx)
   validTx_effects :
     ∀ h tx, ValidTx h tx →
-    ValidEffects {o | InCreated o h} {o | InConsumed o h} (tx.action.effects tx.objects)
+    let h' := h.map specTx
+    let tx' := specTx tx
+    ValidEffects {o | InCreated o h'} {o | InConsumed o h'} (tx'.action.effects tx'.objects)
 
   -- Obligation: A mutate event is valid if it preserves the type of the object
   validTx_mutate :
     ∀ h tx, ValidTx h tx →
-    ∀ ev ∈ (tx.action.concreteEvents tx.objects), ev.TypePreserving typeOf
+    let tx' := specTx tx
+    ∀ ev ∈ (tx'.action.concreteEvents tx'.objects), ev.TypePreserving typeOf
     -- NOTE: In a future iteration we may say that the identity is preserved
 
   -- Obligation: A transaction is valid if all the reations in actions and subactions hold
   validTx_relations_hold :
-    ∀ h tx, ValidTx h tx → Tx.RelationsHold tx
+    ∀ h tx, ValidTx h tx →
+    let tx' := specTx tx
+    Tx.RelationsHold tx'
 
   -- Obligation: A transaction is valid if all touched objects are touched via events
   -- in actions that belong to their type
   validTx_ops_type_match:
     ∀ h tx, ValidTx h tx →
-    Action.AllSubactions (Action.OpsTypeMatch typeOf) tx.action tx.objects
-
+    let tx' := specTx tx
+    Action.AllSubactions (Action.OpsTypeMatch typeOf) tx'.action tx'.objects
 
 -- Definitions
 
 namespace SystemSpec
 
 -- Prop: The history is valid.  An sound implementation must prove this proposition.
-def ValidHistory {Object : Type} [DecidableEq Object] (spec : SystemSpec Object) :
-    List (Tx Object) → Prop
+def ValidHistory {Object : Type} {TxPayload : Type} [DecidableEq Object] (spec : SystemSpec Object TxPayload) :
+    List TxPayload → Prop
   | [] => True
   | tx :: history => spec.ValidHistory history ∧ spec.ValidTx history tx
 

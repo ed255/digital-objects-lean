@@ -1,7 +1,7 @@
-import DigitalObjects.Impl.Types
+import DigitalObjects.Impl.Defs
 
 namespace TxLib
-open Impl.Types (Object ObjectType Chain Event)
+open Impl (Object ObjectType Chain Event)
 
 -- TxLib uses hash chains to roll a sequence of values and then unroll it.
 -- Assuming secure cryptographic hashes and the random oracle model, we can

@@ -1,10 +1,10 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Logic.Relation
-import DigitalObjects.Impl.Types
+import DigitalObjects.Impl.Defs
 import DigitalObjects.Impl.TxLib.Events
 
 namespace TxLib
-open Impl.Types (Object ObjectType Nullifier Chain)
+open Impl (Object ObjectType Nullifier Chain StateHeader)
 
 def ArrayContains {α : Type} (array : List α) (index : Nat) (element : α) : Prop :=
   array[index]? = some element
@@ -20,35 +20,6 @@ structure Tx where
   nullifiers : Finset Nullifier
   chain_start : Chain
   chain_end : Chain
-
-structure StateHeader where
-  block_number : Nat
-  created : List Object
-  nullifiers : Finset Nullifier
-  prior_state_history : List StateHeader
-
--- The automatic derivation of DecidableEq doesn't support the nested
--- recursion through `List StateHeader`, so we define it manually (same
--- pattern as `Impl.Event`/`Impl.Action`).
-mutual
-  def StateHeader.decEq : (a b : StateHeader) → Decidable (a = b)
-    | ⟨n1, c1, nf1, ph1⟩, ⟨n2, c2, nf2, ph2⟩ =>
-      have := StateHeader.decEqList ph1 ph2
-      decidable_of_iff (n1 = n2 ∧ c1 = c2 ∧ nf1 = nf2 ∧ ph1 = ph2) (by simp)
-  termination_by a _ => sizeOf a
-
-  def StateHeader.decEqList : (as bs : List StateHeader) → Decidable (as = bs)
-    | [], [] => .isTrue rfl
-    | [], _ :: _ => .isFalse nofun
-    | _ :: _, [] => .isFalse nofun
-    | a :: as, b :: bs =>
-      have := StateHeader.decEq a b
-      have := StateHeader.decEqList as bs
-      decidable_of_iff (a = b ∧ as = bs) (by simp)
-  termination_by as _ => sizeOf as
-end
-
-instance : DecidableEq StateHeader := StateHeader.decEq
 
 -- Auxiliary types
 structure Ins where
@@ -624,5 +595,15 @@ inductive TxFinalized : (state_header : StateHeader) → (tx_final : Tx) → (nu
     (h4 : TxFinalBindings tx_final nullifiers live)
     (h5 : ReplayActions before_tx tx_final chain_start chain_final) :
     TxFinalized state_header tx_final nullifiers live
+
+inductive TxFinalizedPub : (state_header : StateHeader) → (tx_final : Tx) → (nullifiers : Finset Nullifier) → (live : Finset Object) → (before_tx : Tx) → (chain_start chain_final : Chain) → Prop where
+  | mk (state_header : StateHeader) (tx_final : Tx) (nullifiers : Finset Nullifier) (live : Finset Object) (before_tx : Tx) (chain_start chain_final : Chain)
+    -- statements
+    (h1 : InputsGrounded before_tx.live state_header.created)
+    (h2 : chain_start = {init_live := before_tx.live, events := []})
+    (h3 : before_tx = {live := before_tx.live, nullifiers := ∅, chain_start := {init_live := ∅, events := []}, chain_end := {init_live := ∅, events := []}})
+    (h4 : TxFinalBindings tx_final nullifiers live)
+    (h5 : ReplayActions before_tx tx_final chain_start chain_final) :
+    TxFinalizedPub state_header tx_final nullifiers live before_tx chain_start chain_final
 
 end TxLib
